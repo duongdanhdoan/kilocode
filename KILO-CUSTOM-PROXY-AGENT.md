@@ -12,7 +12,8 @@ this checkout. This checkout is only the source you build the extension/CLI from
 install too** — you don't need this fork's source for the pipeline itself. Sections 1 and 4
 (building/installing this checkout), and section 2.2 (auto-imported `.claude`/`.cursor`
 commands), are only needed if you also want this fork's extra code (subagent model badge on
-task rows, short `@file:line` add-to-context, auto-imported external slash commands).
+task rows, short `@file:line` add-to-context, auto-imported external slash commands,
+collapsed long user messages in the transcript).
 
 > **Security note:** this file intentionally contains **no real API keys or proxy domains**.
 > Everywhere you see `<...>` below, substitute your own values. Never commit real secrets into

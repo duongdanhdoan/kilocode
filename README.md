@@ -35,10 +35,12 @@ pick based on what you actually want:
    **[KILO-CUSTOM-PROXY-AGENT.md](KILO-CUSTOM-PROXY-AGENT.md)** for that setup.
 2. **This fork's actual code changes**: a model-name badge on each subagent's task row, a
    short `@file:line` reference instead of dumping the full selection into the chat box when
-   you add code to context, and auto-importing `.claude/commands/`/`.cursor/commands/` slash
-   commands (no symlink needed). You only need to build/install **this specific fork**
-   (instructions in [KILO-CUSTOM-PROXY-AGENT.md](KILO-CUSTOM-PROXY-AGENT.md), section 4) for
-   these. Installing upstream Kilo Code from the Marketplace/npm will **not** include them.
+   you add code to context, auto-importing `.claude/commands/`/`.cursor/commands/` slash
+   commands (no symlink needed), and collapsing long user messages (a slash command's full
+   expanded template, a big pasted doc) in the transcript instead of always showing the full
+   text. You only need to build/install **this specific fork** (instructions in
+   [KILO-CUSTOM-PROXY-AGENT.md](KILO-CUSTOM-PROXY-AGENT.md), section 4) for these. Installing
+   upstream Kilo Code from the Marketplace/npm will **not** include them.
 
 Everything under "Installation" below is the standard **upstream** Kilo Code install — use it
 for option 1. For option 2, skip to the setup guide instead.
