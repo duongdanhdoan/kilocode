@@ -110,7 +110,35 @@ kilo models alibaba
 kilo mcp list
 ```
 
-### 2.2 `~/.config/kilo/AGENTS.md` — rules applied to every agent, every project
+### 2.2 Import your existing Claude Code slash commands
+
+Kilo has its own `/command` system, but scans `{command,commands}/**/*.md` — a different
+folder name than Claude Code's `.claude/commands/`. Same markdown-with-frontmatter format
+(and Kilo also supports `$ARGUMENTS` in the template), so a symlink is enough — no rewriting:
+
+```bash
+# Global commands (~/.claude/commands/*.md -> every project)
+mkdir -p ~/.config/kilo/command
+for f in ~/.claude/commands/*.md; do
+  ln -sf "$f" ~/.config/kilo/command/"$(basename "$f")"
+done
+
+# Project-local commands (one project's .claude/commands/ -> that project only)
+cd /path/to/project
+mkdir -p .kilo
+echo "command" >> .kilo/.gitignore   # don't commit a personal symlink into the team repo
+ln -s ../.claude/commands .kilo/command
+```
+
+Verify a project sees both global and local commands:
+
+```bash
+kilo serve --port 0 &
+curl -s "http://localhost:<port>/command?directory=/path/to/project" | python3 -c \
+  "import json,sys; print([c['name'] for c in json.load(sys.stdin)])"
+```
+
+### 2.3 `~/.config/kilo/AGENTS.md` — rules applied to every agent, every project
 
 This file is auto-loaded into the system prompt of **every** Kilo session (any agent, any
 project) — it's the global rules file, equivalent to a global `CLAUDE.md`.
@@ -140,7 +168,7 @@ When asked to checkout/create a branch from a ticket (e.g. "checkout PROJ-1234")
 Kilo also auto-loads `~/.claude/CLAUDE.md` by default (same file Claude Code reads) — so any
 rules you already keep there for Claude Code apply to Kilo too, for free.
 
-### 2.3 `~/.config/kilo/agent/*.md` — custom agents/roles
+### 2.4 `~/.config/kilo/agent/*.md` — custom agents/roles
 
 Each file = one custom agent. Frontmatter binds a model + permissions; the markdown body is
 the system prompt. Example role (`~/.config/kilo/agent/reviewer.md`):
