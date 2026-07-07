@@ -8,10 +8,11 @@ DashScope), with human approval gates between phases. Runs inside any VS Code-fa
 Config is **global** (`~/.config/kilo/`) — it applies to every project on the machine, not just
 this checkout. This checkout is only the source you build the extension/CLI from.
 
-**Sections 2 and 3 (global config, rules, agents) work with a plain official Kilo Code
+**Sections 2.1, 2.3, 2.4 (providers, rules, agents) work with a plain official Kilo Code
 install too** — you don't need this fork's source for the pipeline itself. Sections 1 and 4
-(building/installing this checkout) are only needed if you also want this fork's two extra
-extension UI tweaks (subagent model badge on task rows, short `@file:line` add-to-context).
+(building/installing this checkout), and section 2.2 (auto-imported `.claude`/`.cursor`
+commands), are only needed if you also want this fork's extra code (subagent model badge on
+task rows, short `@file:line` add-to-context, auto-imported external slash commands).
 
 > **Security note:** this file intentionally contains **no real API keys or proxy domains**.
 > Everywhere you see `<...>` below, substitute your own values. Never commit real secrets into
@@ -110,27 +111,27 @@ kilo models alibaba
 kilo mcp list
 ```
 
-### 2.2 Import your existing Claude Code slash commands
+### 2.2 Existing Claude Code / Cursor slash commands are auto-imported
 
-Kilo has its own `/command` system, but scans `{command,commands}/**/*.md` — a different
-folder name than Claude Code's `.claude/commands/`. Same markdown-with-frontmatter format
-(and Kilo also supports `$ARGUMENTS` in the template), so a symlink is enough — no rewriting:
+This fork patches `packages/opencode/src/config/paths.ts` and `config.ts`
+(`ConfigPaths.externalCommandDirectories`) so Kilo also scans `.claude/commands/**/*.md` and
+`.cursor/commands/**/*.md` — both project-local (walked up from the current directory) and
+global (`~/.claude/commands/`, `~/.cursor/commands/`) — in addition to its own native
+`{command,commands}/**/*.md` convention. No symlinks, no copying, nothing to set up: any
+command you already have for Claude Code or Cursor just works in Kilo too, since the format
+(markdown + YAML frontmatter + `$ARGUMENTS` substitution) matches. On a name collision, a
+project's own Kilo-native `command/*.md` wins.
+
+This only applies if you built/installed **this fork** (section 4) — official upstream Kilo
+Code doesn't have this patch. If you're on official Kilo Code, symlink instead:
 
 ```bash
-# Global commands (~/.claude/commands/*.md -> every project)
 mkdir -p ~/.config/kilo/command
-for f in ~/.claude/commands/*.md; do
-  ln -sf "$f" ~/.config/kilo/command/"$(basename "$f")"
-done
-
-# Project-local commands (one project's .claude/commands/ -> that project only)
-cd /path/to/project
-mkdir -p .kilo
-echo "command" >> .kilo/.gitignore   # don't commit a personal symlink into the team repo
-ln -s ../.claude/commands .kilo/command
+for f in ~/.claude/commands/*.md; do ln -sf "$f" ~/.config/kilo/command/"$(basename "$f")"; done
+# project-local: cd /path/to/project && mkdir -p .kilo && ln -s ../.claude/commands .kilo/command
 ```
 
-Verify a project sees both global and local commands:
+Verify a project sees the commands:
 
 ```bash
 kilo serve --port 0 &

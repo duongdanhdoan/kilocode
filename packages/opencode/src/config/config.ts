@@ -981,6 +981,14 @@ export const layer = Layer.effect(
           yield* mergePluginOrigins(dir, list, dirScope) // kilocode_change
         }
 
+        // kilocode_change start - import commands from .claude/commands and .cursor/commands
+        // without requiring the user to symlink them into a Kilo-native command/ dir. Merged
+        // last so a project's own Kilo-native command/ definitions win on a name collision.
+        for (const dir of yield* ConfigPaths.externalCommandDirectories(ctx.directory, ctx.worktree)) {
+          result.command = mergeDeep(result.command ?? {}, yield* Effect.promise(() => ConfigCommand.load(dir, warnings)))
+        }
+        // kilocode_change end
+
         if (process.env.KILO_CONFIG_CONTENT) {
           // kilocode_change start - capture KILO_CONFIG_CONTENT parse failures as warnings
           const source = "KILO_CONFIG_CONTENT"
