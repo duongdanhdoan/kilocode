@@ -8,6 +8,11 @@ DashScope), with human approval gates between phases. Runs inside any VS Code-fa
 Config is **global** (`~/.config/kilo/`) — it applies to every project on the machine, not just
 this checkout. This checkout is only the source you build the extension/CLI from.
 
+**Sections 2 and 3 (global config, rules, agents) work with a plain official Kilo Code
+install too** — you don't need this fork's source for the pipeline itself. Sections 1 and 4
+(building/installing this checkout) are only needed if you also want this fork's two extra
+extension UI tweaks (subagent model badge on task rows, short `@file:line` add-to-context).
+
 > **Security note:** this file intentionally contains **no real API keys or proxy domains**.
 > Everywhere you see `<...>` below, substitute your own values. Never commit real secrets into
 > this repo or into any file tracked by git — the working config lives outside the repo, at

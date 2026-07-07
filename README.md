@@ -21,11 +21,28 @@
 
 ---
 
-> **This is a personal fork** of Kilo Code, pre-configured with a custom 5-role agentic
-> pipeline (multi-provider: Claude + Qwen, with human approval gates between phases).
-> If you want to install/build *this fork* specifically, see
-> **[KILO-CUSTOM-PROXY-AGENT.md](KILO-CUSTOM-PROXY-AGENT.md)** for setup — the rest of this
-> README describes the upstream Kilo Code product.
+## ⚠️ This is a personal fork — read this before installing
+
+This repo adds a custom 5-role agentic pipeline (Claude + Qwen mixed per role, human approval
+gates between phases) on top of upstream Kilo Code. There are **two separate things** here —
+pick based on what you actually want:
+
+1. **The pipeline itself (agents, providers, MCP servers, rules)** lives entirely in your
+   **global** `~/.config/kilo/` folder — it is NOT baked into this fork's code. This means the
+   **official Kilo Code** extension/CLI (installed the normal way below, from the Marketplace
+   or npm) reads that same folder and runs the exact same pipeline. **You do not need this
+   fork just to use the pipeline.** Go straight to
+   **[KILO-CUSTOM-PROXY-AGENT.md](KILO-CUSTOM-PROXY-AGENT.md)** for that setup.
+2. **This fork's actual code changes** are two small extension UI tweaks (a model-name badge
+   on each subagent's task row, and a short `@file:line` reference instead of dumping the full
+   selection into the chat box when you add code to context). You only need to build/install
+   **this specific fork** (instructions in
+   [KILO-CUSTOM-PROXY-AGENT.md](KILO-CUSTOM-PROXY-AGENT.md), section 4) if you want those two
+   UI changes too. Installing upstream Kilo Code from the Marketplace/npm will **not** include
+   them.
+
+Everything under "Installation" below is the standard **upstream** Kilo Code install — use it
+for option 1. For option 2, skip to the setup guide instead.
 
 Kilo Code is an AI coding agent that meets you everywhere you work: [VS Code](https://kilo.ai/landing/vs-code), [JetBrains](https://kilo.ai/features/jetbrains-native), and the [CLI](https://kilo.ai/cli). It's open source with open pricing. You pick from 500+ models, switch between them mid-task, and pay the model provider's rate with zero markup. No API keys required to start.
 
