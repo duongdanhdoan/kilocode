@@ -16,12 +16,25 @@ this checkout. This checkout is only the source you build the extension/CLI from
 ## 1. Build the fork
 
 ```bash
-git clone https://github.com/Kilo-Org/kilocode.git
-cd kilocode
+git clone https://github.com/duongdanhdoan/kilocode.git kilo-custom-proxy-agent
+cd kilo-custom-proxy-agent
 bun install
 ```
 
+> **Path must not contain a space.** The JetBrains plugin's Gradle/OpenAPI-generator build
+> parses the checkout path as a URI and fails with "Illegal character in path" if it contains
+> a space (e.g. `~/Desktop/my project` breaks it, `~/Desktop/my-project` doesn't). This only
+> bites you if a pre-push hook or `bun turbo typecheck` touches `@kilocode/kilo-jetbrains`.
+
 Requirements: Bun 1.3.14+. Java 21 only if you touch the JetBrains plugin (`sdk install java 21-tem`).
+
+To pull future updates from the original Kilo Code project:
+
+```bash
+git remote add kilo-upstream https://github.com/Kilo-Org/kilocode.git
+git fetch kilo-upstream
+git merge kilo-upstream/main   # or rebase, resolve conflicts as needed
+```
 
 Sanity check:
 

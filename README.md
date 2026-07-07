@@ -21,6 +21,12 @@
 
 ---
 
+> **This is a personal fork** of Kilo Code, pre-configured with a custom 5-role agentic
+> pipeline (multi-provider: Claude + Qwen, with human approval gates between phases).
+> If you want to install/build *this fork* specifically, see
+> **[KILO-CUSTOM-PROXY-AGENT.md](KILO-CUSTOM-PROXY-AGENT.md)** for setup — the rest of this
+> README describes the upstream Kilo Code product.
+
 Kilo Code is an AI coding agent that meets you everywhere you work: [VS Code](https://kilo.ai/landing/vs-code), [JetBrains](https://kilo.ai/features/jetbrains-native), and the [CLI](https://kilo.ai/cli). It's open source with open pricing. You pick from 500+ models, switch between them mid-task, and pay the model provider's rate with zero markup. No API keys required to start.
 
 ### Installation
