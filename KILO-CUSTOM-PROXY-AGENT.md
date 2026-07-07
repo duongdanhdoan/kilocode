@@ -112,6 +112,80 @@ kilo models alibaba
 kilo mcp list
 ```
 
+If your Qwen/DashScope key is on a free tier (commonly 1M tokens *per model ID*, not shared),
+watch usage with `kilo stats --models`. Save this as `~/.config/kilo/check-qwen-quota.sh`
+(`chmod +x` it) to flag any model creeping toward the limit:
+
+```bash
+#!/usr/bin/env bash
+# Warn when any alibaba/* (DashScope/Qwen) model's tracked token usage
+# gets close to the free-tier quota (default 800K, quota is 1M/model).
+# Usage: check-qwen-quota.sh [threshold] [--days N]
+set -euo pipefail
+
+THRESHOLD=800000
+DAYS_ARGS=()
+for arg in "$@"; do
+  if [[ "$arg" =~ ^[0-9]+$ ]]; then
+    THRESHOLD="$arg"
+  else
+    DAYS_ARGS+=("$arg")
+  fi
+done
+
+KILO_BIN="${KILO_BIN:-kilo}"
+
+"$KILO_BIN" stats --models --pure "${DAYS_ARGS[@]+"${DAYS_ARGS[@]}"}" 2>/dev/null | awk -v threshold="$THRESHOLD" '
+function tonum(s,   n) {
+  gsub(/[^0-9.KM]/, "", s)
+  if (s ~ /K$/) { sub(/K$/, "", s); return s * 1000 }
+  if (s ~ /M$/) { sub(/M$/, "", s); return s * 1000000 }
+  return s + 0
+}
+function flush() {
+  if (model !~ /^alibaba\//) return
+  seen = 1
+  total = input + output
+  status = (total > threshold) ? "OVER" : "ok"
+  printf "%-28s input=%9.0f  output=%8.0f  total=%9.0f  [%s]\n", model, input, output, total, status
+  if (status == "OVER") any_over = 1
+}
+/^│ [a-zA-Z0-9._-]+\// {
+  flush()
+  model = $2
+  input = 0
+  output = 0
+  next
+}
+/Input Tokens/  { input  = tonum($(NF-1)) }
+/Output Tokens/ { output = tonum($(NF-1)) }
+END {
+  flush()
+  if (!seen) {
+    print "(no alibaba/* usage recorded for this window)"
+    exit 0
+  }
+  if (any_over) {
+    print ""
+    print "⚠ one or more Qwen models are over the threshold - check https://modelstudio.console.alibabacloud.com and consider switching that role to the ficus (Claude) provider temporarily."
+    exit 1
+  }
+}
+'
+```
+
+```bash
+~/.config/kilo/check-qwen-quota.sh          # warns if any alibaba/* model > 800K tokens
+~/.config/kilo/check-qwen-quota.sh 500000   # custom threshold
+~/.config/kilo/check-qwen-quota.sh --days 7 # last 7 days only
+```
+
+**Dev build vs installed build use separate local databases** (`kilo-local.db` for a `--pure`/dev
+run vs `kilo-main.db` for the packaged extension) — `kilo stats` run against the wrong binary
+won't reflect your real usage. Run it via whichever `kilo` your IDE actually uses (usually the
+one first on `$PATH`, or the extension's bundled copy under its install directory) to get real
+numbers.
+
 ### 2.2 Existing Claude Code / Cursor slash commands are auto-imported
 
 This fork patches `packages/opencode/src/config/paths.ts` and `config.ts`
