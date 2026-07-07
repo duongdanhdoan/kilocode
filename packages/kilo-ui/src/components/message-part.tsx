@@ -742,12 +742,20 @@ export function UserMessageDisplay(props: {
   const dialog = useDialog()
   const i18n = useI18n()
   const [copied, setCopied] = createSignal(false)
+  const [expanded, setExpanded] = createSignal(false)
 
   const textPart = createMemo(
     () => props.parts?.find((p) => p.type === "text" && !(p as TextPart).synthetic) as TextPart | undefined,
   )
 
   const text = createMemo(() => props.text ?? textPart()?.text ?? "")
+
+  // Long user messages (e.g. a slash command's full expanded template, or a big pasted doc)
+  // collapse to a preview by default so the transcript stays scannable.
+  const isLong = createMemo(() => {
+    const value = text()
+    return value.length > 800 || (value.match(/\n/g)?.length ?? 0) > 12
+  })
 
   const files = createMemo(() => (props.parts?.filter((p) => p.type === "file") as FilePart[]) ?? [])
 
@@ -849,9 +857,22 @@ export function UserMessageDisplay(props: {
             <div data-slot="user-message-body">
               {props.header}
               <Show when={text()}>
-                <div data-slot="user-message-text" data-queued={props.queued ? "" : undefined}>
+                <div
+                  data-slot="user-message-text"
+                  data-queued={props.queued ? "" : undefined}
+                  data-collapsed={isLong() && !expanded() ? "" : undefined}
+                >
                   <HighlightedText text={text()} references={inlineFiles()} agents={agents()} />
                 </div>
+                <Show when={isLong()}>
+                  <button
+                    type="button"
+                    data-slot="user-message-expand-toggle"
+                    onClick={() => setExpanded((v) => !v)}
+                  >
+                    {expanded() ? i18n.t("ui.message.collapse") : i18n.t("ui.message.expand")}
+                  </button>
+                </Show>
               </Show>
               <GrowBox animate={!!props.animate} open={!!props.queued}>
                 <div data-slot="user-message-queued-indicator">
