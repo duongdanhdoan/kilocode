@@ -159,7 +159,7 @@
   width: 100%;
   overflow: hidden;
   padding: 2px 4px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--kilo-chat-radius-sm);
   background: color-mix(in srgb, var(--vscode-foreground) 3%, transparent);
 }
 
@@ -198,7 +198,7 @@
   background: var(--timeline-color);
   opacity: 0.7;
   pointer-events: none;
-  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.2s var(--kilo-chat-ease);
 }
 
 .task-timeline-bar--active {
@@ -280,15 +280,17 @@
    ============================================ */
 
 [data-component="task-header-graph"] {
-  --kilo-ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin: 6px 8px;
   padding: 10px 8px 8px;
-  border-radius: var(--radius-xl);
+  border-radius: var(--kilo-chat-radius-md);
   background: color-mix(in srgb, var(--vscode-foreground) 4%, transparent);
-  transition: background 0.2s var(--kilo-ease-smooth);
+  box-shadow: var(--kilo-chat-shadow-soft);
+  transition:
+    background 0.2s var(--kilo-chat-ease),
+    box-shadow 0.2s var(--kilo-chat-ease);
 }
 
 [data-slot="task-header-graph-row"] {
@@ -333,9 +335,9 @@
   height: auto;
   margin: 0 4px;
   padding: 4px 6px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--kilo-chat-radius-sm);
   color: inherit;
-  transition: background-color 0.2s var(--kilo-ease-smooth);
+  transition: background-color 0.2s var(--kilo-chat-ease);
 }
 
 .task-header-usage-trigger:hover {

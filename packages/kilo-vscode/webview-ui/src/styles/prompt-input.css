@@ -8,12 +8,15 @@
   border-radius: 20px;
   background-color: var(--input-base, var(--vscode-input-background, #3c3c3c));
   border: 1px solid var(--border-weak-base, var(--vscode-input-border, #3c3c3c));
-  box-shadow: none;
+  box-shadow: var(--kilo-chat-shadow-soft);
   overflow: hidden;
+  transition:
+    border-color 0.2s var(--kilo-chat-ease),
+    box-shadow 0.2s var(--kilo-chat-ease);
 
   &:focus-within {
     border-color: var(--border-focus, var(--vscode-focusBorder, #007fd4));
-    box-shadow: none;
+    box-shadow: var(--kilo-chat-shadow-lift);
   }
 }
 
