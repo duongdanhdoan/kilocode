@@ -5,6 +5,22 @@
 
   [data-slot="text-part-body"] {
     margin-top: 0;
+    transition:
+      opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      font-size 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* In-turn narration text (see isNarration in message-part.tsx): reads
+     as the model thinking out loud between tool calls, not the final
+     answer. Dim and shrink it slightly so the eye lands on the real
+     answer and on tool-call rows instead of a wall of equal-weight prose. */
+  &[data-narration] [data-slot="text-part-body"] {
+    opacity: 0.6;
+    font-size: 0.94em;
+  }
+
+  &[data-narration] [data-slot="text-part-body"]:hover {
+    opacity: 0.92;
   }
 
   [data-slot="text-part-copy-wrapper"] {

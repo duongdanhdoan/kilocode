@@ -1321,6 +1321,22 @@ PART_MAPPING["text"] = function TextPartDisplay(props) {
   // in the chat history on the next reload.
   const showSyntheticPart = createMemo(() => !part().synthetic || streaming())
 
+  // Some models (e.g. reasoning-capable models accessed through a plain
+  // Chat Completions shape with no dedicated reasoning channel) emit their
+  // extended thinking as literal `text` parts instead of `reasoning` parts,
+  // so the collapsible reasoning UI never engages. Heuristically dim any
+  // text part followed by a later tool part in the same message — it reads
+  // as in-turn narration, not the final answer. Recomputes live as new tool
+  // parts stream in, so the current last part is never dimmed prematurely.
+  const isNarration = createMemo(() => {
+    if (props.message.role !== "assistant") return false
+    const list = data.store.part?.[props.message.id]
+    if (!list) return false
+    const idx = list.findIndex((p) => p.id === part().id)
+    if (idx < 0) return false
+    return list.slice(idx + 1).some((p) => p.type === "tool")
+  })
+
   const showCopy = createMemo(() => {
     // Synthetic text parts (e.g. "Initializing snapshot…" from the slow-repo
     // guard) are transient status indicators, not assistant output — they
@@ -1370,7 +1386,7 @@ PART_MAPPING["text"] = function TextPartDisplay(props) {
 
   return (
     <Show when={throttledText() && showSyntheticPart()}>
-      <div data-component="text-part">
+      <div data-component="text-part" data-narration={isNarration() ? "" : undefined}>
         <div data-slot="text-part-body">
           <Markdown text={throttledText()} cacheKey={part().id} streaming={streaming()} onClick={handleMarkdownClick} />
         </div>
