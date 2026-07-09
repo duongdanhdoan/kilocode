@@ -88,8 +88,10 @@ auto-discovers this directory (XDG config path) for every session, in every proj
   "permission": {
     "bash": "allow", // or "ask" if you want per-command approval globally
   },
-  // Extra instruction files ALWAYS attached to every session's system prompt.
-  "instructions": ["~/.claude/agent_rules.yaml"], // optional, if you keep rules elsewhere
+  // Extra instruction files ALWAYS attached to every session's system prompt. Kilo already
+  // auto-loads ~/.claude/CLAUDE.md by default - only list a file here if it's NOT already
+  // covered there, to avoid injecting the same rules twice on every session.
+  "instructions": ["~/.claude/some-other-rules-file.md"], // optional
   // MCP servers available to every agent (subject to each agent's own permission rules).
   "mcp": {
     "my-local-mcp": {
